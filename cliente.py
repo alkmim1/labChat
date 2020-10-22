@@ -3,8 +3,52 @@ from threading import Thread
 import tkinter
 import re
 import json
+import sqlite3
 
 c=0
+db=sqlite3.connect('lab_redes.db')
+
+def createTable():
+    try:
+        cur=db.cursor()
+        cur.execute('''CREATE TABLE users (
+                       UserID INTEGER PRIMARY KEY AUTOINCREMENT,
+                       name TEXT (20) NOT NULL,
+                       password TEXT (20) NOT NULL
+                       );''')
+        print ('Tabela criada com sucesso')
+    except:
+        db.rollback()
+
+def login(name,password):
+    qry="SELECT from users where name=?, password=?;"
+    try:
+        cur=db.cursor()
+        cur.execute(qry, (name,password))
+        print(cur.fetchone())
+        return True
+    except:
+        db.rollback()
+        return False
+
+def userList():
+    try:
+        cur=db.cursor()
+        cur.execute("SELECT name FROM users;")
+        print(cur.fetchone())
+    except:
+        db.rollback()
+        return False
+
+def createUser(name,password):
+    try:
+        cur=db.cursor()
+        cur.execute("insert into users (name, password) values(?, ?);", (name,password))
+        db.commit()
+        print ("Registrado com sucesso")
+    except:
+        print("Erro na execução")
+        db.rollback()
 
 def updateUsername(current_name,name):
     qry="update users set name=?, where name=?;"
