@@ -31,6 +31,14 @@ def login(name,password):
         db.rollback()
         return False
 
+def userList():
+    try:
+        cur=db.cursor()
+        cur.execute("SELECT name FROM users;")
+        print(cur.fetchone())
+    except:
+        db.rollback()
+        return False
 
 def updateUsername(current_name,name):
     qry="update users set name=?, where name=?;"
