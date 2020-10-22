@@ -6,6 +6,17 @@ import json
 
 c=0
 
+def updateUsername(current_name,name):
+    qry="update users set name=?, where name=?;"
+    try:
+        cur=db.cursor()
+        cur.execute(qry, (name,current_name))
+        db.commit()
+        print("Registro atualizado com sucesso")
+    except:
+        print("Erro na execução")
+        db.rollback()
+
 def receive():
     global c;
     #Handles receiving of messages.
