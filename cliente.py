@@ -40,6 +40,16 @@ def userList():
         db.rollback()
         return False
 
+def createUser(name,password):
+    try:
+        cur=db.cursor()
+        cur.execute("insert into users (name, password) values(?, ?);", (name,password))
+        db.commit()
+        print ("Registrado com sucesso")
+    except:
+        print("Erro na execução")
+        db.rollback()
+
 def updateUsername(current_name,name):
     qry="update users set name=?, where name=?;"
     try:
@@ -209,4 +219,3 @@ if __name__ == "__main__":
 
     receive_thread = Thread(target=receive)
     receive_thread.start()
-    tkinter.mainloop()
