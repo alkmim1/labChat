@@ -60,11 +60,11 @@ def receive():
             if msg == 'Nome em uso!':
                 c+=-1 
             msg_list.insert(tkinter.END, msg)
-        except OSError:  # Possibly client has left the chat.
+        except OSError:  # Cliente deixou o chat
             break
 
-def send(event=None):  # event is passed by binders.
-    #Handles sending of messages.
+def send(event=None): 
+    # Gerencia o envio de mensagens
     global c;
     # print(c)
     if c > 0:
@@ -80,7 +80,7 @@ def send(event=None):  # event is passed by binders.
         msg = re.sub(pattern, '', msg)
         msg = msg.strip() 
         dic['mensagem'] = msg 
-        my_msg.set("")  # Clears input field.
+        my_msg.set("") # Limpa o campo de enviar texto
     
         msg = json.dumps(dic)
         client_socket.send(bytes(msg, "utf8"))
@@ -88,31 +88,74 @@ def send(event=None):  # event is passed by binders.
         if name == "quit":
             client_socket.close()
             top.quit()
-            print('connection closed')
+            print('Conexão Encerrada')
     else:
         msg = my_msg.get()
-        my_msg.set("")  # Clears input field.
+        my_msg.set("")  # Limpa o campo de enviar texto
         client_socket.send(bytes(msg, "utf8"))
         if msg == "{quit}":
             client_socket.close()
             top.quit()
-            print('connection closed')
+            print('Conexão Encerrada')
         c=+1
-    
+
 
 def on_closing(event=None):
-    #This function is to be called when the window is closed.
+    # Fechar conexão quando a janela é fechada
     my_msg.set("{quit}")
     send()
-    print("connection closed")
+    print("Conexão Encerrada")
+
+def menu():
+    print("Escolha uma das opções:\n1 - Login\n2 - Cadastro\n3 - Opções")
+    option = input()
+
+    if option == '1':
+        name = input('Insira seu nome:\n')
+        password = input('Insira sua senha:\n')
+        login(name,password)
+        return name
+    elif option == '2':
+        name = input('Insira seu nome:\n')
+        password = input('Insira sua senha:\n')
+        createUser(name,password)
+        return name
+    else:
+        print("1 - Atualizar nome\n2 - Atualizar senha\n3 - Excluir Usuário\n4 - Listar Usuários")
+        option = input()
+        if option == '1':
+            current_name = input('Insira seu nome atual:\n')
+            name = input('Insira o novo nome:\n')
+            updateUsername(current_name,name)
+            menu()
+        elif option == '2':
+            name = input('Insira seu nome:\n')
+            password = input('Insira a nova senha:\n')
+            updateUserpassword(name,password)
+            menu()
+        elif option == '3':
+            name = input('Insira seu nome:\n')    
+            deleteUser(name)
+            menu()
+        else:
+            userList()
+            menu()    
+        
 
 if __name__ == "__main__":
+
+    createTable()
+    HOST = ''
+    PORT = 33000
+    print("Bem-Vindo!")
+    usuario = menu()
+
     top = tkinter.Tk()
-    top.title("Chat In a Box")
+    top.title("Bate-Papo")
     messages_frame = tkinter.Frame(top)
-    my_msg = tkinter.StringVar()  # For the messages to be sent.
-    my_msg.set("Type your messages here.")
-    scrollbar = tkinter.Scrollbar(messages_frame)  # To navigate through past messages.
+    my_msg = tkinter.StringVar()  # Para as mensagens a serem enviadas.
+    my_msg.set(usuario)
+    scrollbar = tkinter.Scrollbar(messages_frame)  # Para navegação entre as mensagens.
     msg_list = tkinter.Listbox(messages_frame, height=15, width=50, yscrollcommand=scrollbar.set)
     scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
     msg_list.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
@@ -121,20 +164,9 @@ if __name__ == "__main__":
     entry_field = tkinter.Entry(top, textvariable=my_msg)
     entry_field.bind("<Return>", send)
     entry_field.pack()
-    send_button = tkinter.Button(top, text="Send", command=send)
-    send_button.pack()
-    # button to send a delete query
-    send_button = tkinter.Button(top, text="Sakujo username ", command=send)
+    send_button = tkinter.Button(top, text="Enviar", command=send)
     send_button.pack()
     top.protocol("WM_DELETE_WINDOW", on_closing)
-
-    HOST = input('Enter host: ')
-    PORT = input('Enter port: ')
-
-    if not PORT:
-        PORT = 5000  # Default value.
-    else:
-        PORT = int(PORT)
 
     BUFSIZ = 1024
     ADDR = (HOST, PORT)
@@ -143,5 +175,4 @@ if __name__ == "__main__":
 
     receive_thread = Thread(target=receive)
     receive_thread.start()
-    tkinter.mainloop()  # Starts GUI execution.
-
+    tkinter.mainloop()
