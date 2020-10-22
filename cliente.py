@@ -17,6 +17,17 @@ def updateUsername(current_name,name):
         print("Erro na execução")
         db.rollback()
 
+def updateUserpassword(name,password):
+    qry="update users set password=? where name=?;"
+    try:
+        cur=db.cursor()
+        cur.execute(qry, (password,name))
+        db.commit()
+        print("Registro atualizado com sucesso")
+    except:
+        print("Erro na execução")
+        db.rollback()
+
 def receive():
     global c;
     #Handles receiving of messages.
