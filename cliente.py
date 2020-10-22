@@ -28,6 +28,29 @@ def updateUserpassword(name,password):
         print("Erro na execução")
         db.rollback()
 
+def deleteUser(name):
+    print(name)
+    qry="DELETE from users where name=?;"
+    try:
+        cur=db.cursor()
+        cur.execute(qry, (name))
+        db.commit()
+        print("Registro excluído com sucesso")
+    except:
+        print("Erro na execução")
+        db.rollback()
+
+def deleteTable():   
+    try:
+        cur=db.cursor()
+        cur.execute('DROP TABLE users;')
+        db.commit()
+        print("Tabela excluída com sucesso")
+    except:
+        print("Erro na execução")
+        db.rollback()
+        db.close()
+
 def receive():
     global c;
     #Handles receiving of messages.
