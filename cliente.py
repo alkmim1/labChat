@@ -6,6 +6,51 @@ import json
 
 c=0
 
+def updateUsername(current_name,name):
+    qry="update users set name=?, where name=?;"
+    try:
+        cur=db.cursor()
+        cur.execute(qry, (name,current_name))
+        db.commit()
+        print("Registro atualizado com sucesso")
+    except:
+        print("Erro na execução")
+        db.rollback()
+
+def updateUserpassword(name,password):
+    qry="update users set password=? where name=?;"
+    try:
+        cur=db.cursor()
+        cur.execute(qry, (password,name))
+        db.commit()
+        print("Registro atualizado com sucesso")
+    except:
+        print("Erro na execução")
+        db.rollback()
+
+def deleteUser(name):
+    print(name)
+    qry="DELETE from users where name=?;"
+    try:
+        cur=db.cursor()
+        cur.execute(qry, (name))
+        db.commit()
+        print("Registro excluído com sucesso")
+    except:
+        print("Erro na execução")
+        db.rollback()
+
+def deleteTable():   
+    try:
+        cur=db.cursor()
+        cur.execute('DROP TABLE users;')
+        db.commit()
+        print("Tabela excluída com sucesso")
+    except:
+        print("Erro na execução")
+        db.rollback()
+        db.close()
+
 def receive():
     global c;
     #Handles receiving of messages.
