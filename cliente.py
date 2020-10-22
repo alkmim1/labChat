@@ -40,8 +40,6 @@ def userList():
         db.rollback()
         return False
 
-
-
 def updateUsername(current_name,name):
     qry="update users set name=?, where name=?;"
     try:
