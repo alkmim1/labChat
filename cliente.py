@@ -219,4 +219,3 @@ if __name__ == "__main__":
 
     receive_thread = Thread(target=receive)
     receive_thread.start()
-    tkinter.mainloop()
